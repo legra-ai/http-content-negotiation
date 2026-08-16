@@ -1,0 +1,7 @@
+#!/bin/sh
+# Validate conventional commit format with mandatory scope.
+if ! grep -qE '^[a-z]+\([a-z0-9./-]+\)!?: .+' "$1"; then
+    echo "Error: invalid commit message format."
+    echo "Required: type(scope): description"
+    exit 1
+fi

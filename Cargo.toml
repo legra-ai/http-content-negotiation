@@ -1,0 +1,47 @@
+[package]
+name = "http-content-negotiation"
+version = "0.1.0"
+description = "Axum and Tower content and language negotiation for streaming HTTP responses"
+authors = ["DataRoad Inc, Delaware, USA, trading as Legra"]
+edition = "2024"
+rust-version = "1.97.1"
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+repository = "https://github.com/legra-ai/http-content-negotiation"
+keywords = ["axum", "tower", "http", "content-negotiation", "streaming"]
+categories = ["web-programming::http-server", "web-programming::http-client"]
+publish = true
+build = "build.rs"
+include = [
+    "src/**",
+    "Cargo.toml",
+    "README.md",
+    "LICENSE-*",
+    "build.rs",
+]
+
+[lib]
+doctest = true
+
+[dependencies]
+axum = "0.8"
+http = "1"
+thiserror = "2"
+tower = "0.5"
+
+[build-dependencies]
+rhusky = "0.0.6"
+
+[dev-dependencies]
+bytes = "1"
+futures-util = "0.3"
+http-body-util = "0.1"
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+tower = { version = "0.5", features = ["util"] }
+
+[lints.rust]
+missing_docs = "deny"
+
+[lints.clippy]
+all = "warn"
+pedantic = "warn"

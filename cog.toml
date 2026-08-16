@@ -1,0 +1,7 @@
+[commit_types]
+feat = { changelog_title = "Features" }
+fix = { changelog_title = "Fixes" }
+refactor = { changelog_title = "Refactoring" }
+docs = { changelog_title = "Documentation" }
+test = { changelog_title = "Tests" }
+chore = { changelog_title = "Maintenance" }

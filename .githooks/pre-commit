@@ -1,0 +1,19 @@
+#!/bin/sh
+if ! rustup run nightly rustc --version > /dev/null 2>&1; then
+    echo "Error: Rust nightly toolchain is required but not installed."
+    exit 1
+fi
+
+if cargo +nightly fmt -- --check; then
+    :
+else
+    echo "Format check failed. Run: cargo +nightly fmt"
+    exit 1
+fi
+
+if cargo +nightly clippy --all-targets -- -D warnings; then
+    :
+else
+    echo "Clippy check failed."
+    exit 1
+fi
