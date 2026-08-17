@@ -3,7 +3,7 @@ use std::sync::Arc;
 use axum::http::{HeaderMap, header};
 
 use crate::accept::ParsedAccept;
-use crate::error::NegotiationError;
+use crate::error::{HeaderField, NegotiationError};
 
 /// Application-defined identifier for one wire representation.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -111,13 +111,13 @@ impl RequestMediaType {
         let Some(value) = headers.get(header::CONTENT_TYPE) else {
             return Ok(None);
         };
-        let value = value
-            .to_str()
-            .map_err(|_| NegotiationError::invalid_header("content-type", "value is not UTF-8"))?;
+        let value = value.to_str().map_err(|_| {
+            NegotiationError::invalid_header(HeaderField::ContentType, "value is not UTF-8")
+        })?;
         let media_type = value.split(';').next().unwrap_or_default().trim();
         if !is_concrete_media_type(media_type) {
             return Err(NegotiationError::invalid_header(
-                "content-type",
+                HeaderField::ContentType,
                 format!("invalid media type {media_type:?}"),
             ));
         }

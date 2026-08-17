@@ -15,7 +15,7 @@ mod layer;
 mod media;
 
 pub use crate::accept::{MediaRange, ParsedAccept};
-pub use crate::error::NegotiationError;
+pub use crate::error::{HeaderField, NegotiationError};
 pub use crate::language::{
     AcceptLanguage, LocalePolicy, LocaleRange, SelectedLocale, accept_language_from_headers,
 };
@@ -24,3 +24,18 @@ pub use crate::media::{
     NegotiatedRepresentation, Representation, RepresentationId, RepresentationRegistry,
     RequestMediaType, RequestMediaTypes,
 };
+
+/// Common media-type constants for representations frequently used with the
+/// negotiation layer. Applications may register any additional media type.
+pub mod media_type {
+    /// JSON document representation.
+    pub const APPLICATION_JSON: &str = "application/json";
+    /// Newline-delimited JSON record-stream representation.
+    pub const APPLICATION_NDJSON: &str = "application/x-ndjson";
+    /// YAML document representation.
+    pub const APPLICATION_YAML: &str = "application/yaml";
+    /// Opaque byte-stream representation.
+    pub const APPLICATION_OCTET_STREAM: &str = "application/octet-stream";
+    /// UTF-8 plain-text error representation.
+    pub const TEXT_PLAIN_UTF8: &str = "text/plain; charset=utf-8";
+}

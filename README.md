@@ -34,15 +34,16 @@ use http_content_negotiation::{
     Representation,
     RepresentationId,
     RepresentationRegistry,
+    media_type,
 };
 
 const JSON: Representation = Representation::new(
     RepresentationId::new("json"),
-    "application/json",
+    media_type::APPLICATION_JSON,
 );
 const JSONL: Representation = Representation::new(
     RepresentationId::new("jsonl"),
-    "application/x-ndjson",
+    media_type::APPLICATION_NDJSON,
 );
 
 let registry = RepresentationRegistry::new(JSON, [JSON, JSONL]);
@@ -61,7 +62,7 @@ selected representation and locale:
 
 ```rust,ignore
 use axum::body::Body;
-use axum::http::Response;
+use axum::http::{Response, header};
 use bytes::Bytes;
 use futures_util::stream;
 use http_content_negotiation::{DeferredResponse, RenderError};
@@ -74,7 +75,7 @@ async fn stream_records() -> DeferredResponse {
             Ok(Bytes::from_static(b"{\"id\":2}\n")),
         ]);
         Response::builder()
-            .header("content-type", media_type)
+            .header(header::CONTENT_TYPE, media_type)
             .body(Body::from_stream(body))
             .map_err(|error| RenderError::new(error.to_string()))
     })

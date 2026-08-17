@@ -15,13 +15,16 @@ use futures_util::stream;
 use http_body_util::BodyExt;
 use http_content_negotiation::{
     ContentNegotiationLayer, DeferredResponse, LocalePolicy, Representation, RepresentationId,
-    RepresentationRegistry, RequestMediaTypes,
+    RepresentationRegistry, RequestMediaTypes, media_type,
 };
 use tower::ServiceExt;
 
-const JSON: Representation = Representation::new(RepresentationId::new("json"), "application/json");
-const JSONL: Representation =
-    Representation::new(RepresentationId::new("jsonl"), "application/x-ndjson");
+const JSON: Representation =
+    Representation::new(RepresentationId::new("json"), media_type::APPLICATION_JSON);
+const JSONL: Representation = Representation::new(
+    RepresentationId::new("jsonl"),
+    media_type::APPLICATION_NDJSON,
+);
 static SUPPORTED_LOCALES: &[&str] = &["en-US", "nl-NL"];
 
 #[tokio::test]
@@ -54,14 +57,17 @@ async fn layer_selects_jsonl_locale_and_streams_the_body() {
 
     let request = Request::builder()
         .uri("/")
-        .header(header::ACCEPT, "application/x-ndjson")
+        .header(header::ACCEPT, media_type::APPLICATION_NDJSON)
         .header(header::ACCEPT_LANGUAGE, "nl-NL")
         .body(Body::empty())
         .expect("request");
     let response = app.oneshot(request).await.expect("response");
     let headers = response.headers();
     assert_eq!(response.status(), StatusCode::OK);
-    assert_eq!(headers[header::CONTENT_TYPE], "application/x-ndjson");
+    assert_eq!(
+        headers[header::CONTENT_TYPE],
+        media_type::APPLICATION_NDJSON
+    );
     assert_eq!(headers[header::VARY], "Accept, Accept-Language");
     let body = response
         .into_body()
@@ -106,12 +112,12 @@ async fn request_content_type_can_be_validated_without_buffering_the_body() {
     let registry = RepresentationRegistry::new(JSON, [JSON]);
     let app = Router::new().route("/", get(|| async { "ok" })).layer(
         ContentNegotiationLayer::new(registry)
-            .with_request_media_types(RequestMediaTypes::new(["application/json"])),
+            .with_request_media_types(RequestMediaTypes::new([media_type::APPLICATION_JSON])),
     );
 
     let request = Request::builder()
         .uri("/")
-        .header(header::CONTENT_TYPE, "application/yaml")
+        .header(header::CONTENT_TYPE, media_type::APPLICATION_YAML)
         .body(Body::empty())
         .expect("request");
     let response = app.oneshot(request).await.expect("response");

@@ -1,10 +1,15 @@
 #![allow(missing_docs)]
 
-use http_content_negotiation::{NegotiationError, ParsedAccept, Representation, RepresentationId};
+use http_content_negotiation::{
+    HeaderField, NegotiationError, ParsedAccept, Representation, RepresentationId, media_type,
+};
 
-const JSON: Representation = Representation::new(RepresentationId::new("json"), "application/json");
-const JSONL: Representation =
-    Representation::new(RepresentationId::new("jsonl"), "application/x-ndjson");
+const JSON: Representation =
+    Representation::new(RepresentationId::new("json"), media_type::APPLICATION_JSON);
+const JSONL: Representation = Representation::new(
+    RepresentationId::new("jsonl"),
+    media_type::APPLICATION_NDJSON,
+);
 
 #[test]
 fn quality_and_specificity_select_the_best_representation() {
@@ -36,7 +41,10 @@ fn malformed_quality_fails_fast() {
 
     assert!(matches!(
         error,
-        NegotiationError::InvalidHeader { name: "accept", .. }
+        NegotiationError::InvalidHeader {
+            name: HeaderField::Accept,
+            ..
+        }
     ));
 }
 

@@ -1,6 +1,6 @@
 use axum::http::{HeaderMap, header};
 
-use crate::error::NegotiationError;
+use crate::error::{HeaderField, NegotiationError};
 
 /// One language range from an `Accept-Language` header.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -46,7 +46,7 @@ impl AcceptLanguage {
             }
             if tag != "*" && !is_language_range(tag) {
                 return Err(NegotiationError::invalid_header(
-                    "accept-language",
+                    HeaderField::AcceptLanguage,
                     format!("invalid language range {tag:?}"),
                 ));
             }
@@ -181,7 +181,7 @@ pub fn accept_language_from_headers(headers: &HeaderMap) -> Result<Option<&str>,
         .get(header::ACCEPT_LANGUAGE)
         .map(|value| {
             value.to_str().map(Some).map_err(|_| {
-                NegotiationError::invalid_header("accept-language", "value is not UTF-8")
+                NegotiationError::invalid_header(HeaderField::AcceptLanguage, "value is not UTF-8")
             })
         })
         .transpose()
@@ -192,11 +192,14 @@ fn parse_quality_milli(value: &str) -> Result<u16, NegotiationError> {
     let value = value.trim_matches('"');
     let (whole, fraction) = value.split_once('.').unwrap_or((value, ""));
     let whole = whole.parse::<u16>().map_err(|_| {
-        NegotiationError::invalid_header("accept-language", format!("invalid q-value {value:?}"))
+        NegotiationError::invalid_header(
+            HeaderField::AcceptLanguage,
+            format!("invalid q-value {value:?}"),
+        )
     })?;
     if whole > 1 || fraction.len() > 3 || !fraction.bytes().all(|byte| byte.is_ascii_digit()) {
         return Err(NegotiationError::invalid_header(
-            "accept-language",
+            HeaderField::AcceptLanguage,
             format!("invalid q-value {value:?}"),
         ));
     }
@@ -207,7 +210,7 @@ fn parse_quality_milli(value: &str) -> Result<u16, NegotiationError> {
     let quality = whole * 1000 + fraction_milli;
     if quality > 1000 {
         return Err(NegotiationError::invalid_header(
-            "accept-language",
+            HeaderField::AcceptLanguage,
             format!("invalid q-value {value:?}"),
         ));
     }

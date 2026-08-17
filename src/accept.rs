@@ -1,4 +1,4 @@
-use crate::error::NegotiationError;
+use crate::error::{HeaderField, NegotiationError};
 use crate::media::Representation;
 
 /// One media range from an `Accept` header.
@@ -149,7 +149,7 @@ impl ParsedAccept {
 fn validate_media_range(value: &str) -> Result<(), NegotiationError> {
     let Some((media_type, subtype)) = value.split_once('/') else {
         return Err(NegotiationError::invalid_header(
-            "accept",
+            HeaderField::Accept,
             format!("invalid media range {value:?}"),
         ));
     };
@@ -157,7 +157,7 @@ fn validate_media_range(value: &str) -> Result<(), NegotiationError> {
     let valid_subtype = subtype == "*" || is_token(subtype);
     if !valid_type || !valid_subtype || (media_type == "*" && subtype != "*") {
         return Err(NegotiationError::invalid_header(
-            "accept",
+            HeaderField::Accept,
             format!("invalid media range {value:?}"),
         ));
     }
@@ -168,11 +168,11 @@ fn parse_quality_milli(value: &str) -> Result<u16, NegotiationError> {
     let value = value.trim_matches('"');
     let (whole, fraction) = value.split_once('.').unwrap_or((value, ""));
     let whole = whole.parse::<u16>().map_err(|_| {
-        NegotiationError::invalid_header("accept", format!("invalid q-value {value:?}"))
+        NegotiationError::invalid_header(HeaderField::Accept, format!("invalid q-value {value:?}"))
     })?;
     if whole > 1 || fraction.len() > 3 || !fraction.bytes().all(|byte| byte.is_ascii_digit()) {
         return Err(NegotiationError::invalid_header(
-            "accept",
+            HeaderField::Accept,
             format!("invalid q-value {value:?}"),
         ));
     }
@@ -183,7 +183,7 @@ fn parse_quality_milli(value: &str) -> Result<u16, NegotiationError> {
     let quality = whole * 1000 + fraction_milli;
     if quality > 1000 {
         return Err(NegotiationError::invalid_header(
-            "accept",
+            HeaderField::Accept,
             format!("invalid q-value {value:?}"),
         ));
     }

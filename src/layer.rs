@@ -8,11 +8,12 @@ use axum::http::{Request, Response, StatusCode, header};
 use axum::response::IntoResponse;
 use tower::{Layer, Service};
 
-use crate::error::NegotiationError;
+use crate::error::{HeaderField, NegotiationError};
 use crate::language::{LocalePolicy, SelectedLocale, accept_language_from_headers};
 use crate::media::{
     NegotiatedRepresentation, RepresentationRegistry, RequestMediaType, RequestMediaTypes,
 };
+use crate::media_type::TEXT_PLAIN_UTF8;
 
 /// Context passed to a deferred streaming response renderer.
 #[derive(Debug, Clone)]
@@ -228,7 +229,7 @@ fn negotiate_request(
     ),
     NegotiationError,
 > {
-    let accept = header_value(headers, header::ACCEPT, "accept")?;
+    let accept = header_value(headers, header::ACCEPT, HeaderField::Accept)?;
     let representation = registry.negotiate(accept)?;
     let request_media_type = RequestMediaType::from_headers(headers)?;
     let request_media_type = match request_media_types {
@@ -316,18 +317,18 @@ fn append_vary(response: &mut Response<Body>, name: &str) {
     );
 }
 
-fn header_value<'a>(
-    headers: &'a axum::http::HeaderMap,
+fn header_value(
+    headers: &axum::http::HeaderMap,
     name: axum::http::HeaderName,
-    label: &'static str,
-) -> Result<Option<&'a str>, NegotiationError> {
+    field: HeaderField,
+) -> Result<Option<&str>, NegotiationError> {
     headers
         .get(name)
         .map(|value| {
             value
                 .to_str()
                 .map(Some)
-                .map_err(|_| NegotiationError::invalid_header(label, "value is not UTF-8"))
+                .map_err(|_| NegotiationError::invalid_header(field, "value is not UTF-8"))
         })
         .transpose()
         .map(Option::flatten)
@@ -337,7 +338,7 @@ fn error_response(error: &NegotiationError) -> Response<Body> {
     let status = error.status();
     Response::builder()
         .status(status)
-        .header(header::CONTENT_TYPE, "text/plain; charset=utf-8")
+        .header(header::CONTENT_TYPE, TEXT_PLAIN_UTF8)
         .body(Body::from(error.to_string()))
         .expect("static negotiation error response must build")
 }
@@ -345,7 +346,7 @@ fn error_response(error: &NegotiationError) -> Response<Body> {
 fn render_error_response(error: &RenderError) -> Response<Body> {
     Response::builder()
         .status(StatusCode::INTERNAL_SERVER_ERROR)
-        .header(header::CONTENT_TYPE, "text/plain; charset=utf-8")
+        .header(header::CONTENT_TYPE, TEXT_PLAIN_UTF8)
         .body(Body::from(error.to_string()))
         .expect("static render error response must build")
 }
