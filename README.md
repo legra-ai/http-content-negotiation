@@ -56,7 +56,7 @@ are handled by the same parser.
 
 ## Handlers stay representation-agnostic
 
-Handlers can return [`DeferredResponse`]. The handler does not parse request
+Handlers can return `DeferredResponse`. The handler does not parse request
 headers or choose a format. The global layer invokes the renderer with the
 selected representation and locale:
 
@@ -97,13 +97,15 @@ static SUPPORTED: &[LanguageIdentifier] =
 let policy = LocalePolicy::new(SUPPORTED[0].clone(), SUPPORTED);
 ```
 
-Locale values are [`unic-langid`](https://docs.rs/unic-langid/0.9/unic_langid/struct.LanguageIdentifier.html)
+Locale values are `unic-langid`
+(<https://docs.rs/unic-langid/0.9/unic_langid/struct.LanguageIdentifier.html>)
 BCP 47 language identifiers, not unchecked strings. The `Accept-Language`
 parser exposes typed ranges: either a `LanguageIdentifier` or the HTTP `*`
 wildcard, with quality values kept separately.
 
-The selected locale is available as a [`SelectedLocale`](https://docs.rs/http-content-negotiation/latest/http_content_negotiation/struct.SelectedLocale.html)
-request extension and to deferred renderers through [`RenderContext`]. The
+The selected locale is available as `SelectedLocale`
+(<https://docs.rs/http-content-negotiation/latest/http_content_negotiation/struct.SelectedLocale.html>)
+request extension and to deferred renderers through `RenderContext`. The
 layer also adds the appropriate `Vary` headers.
 
 This crate does not contain application translation catalogs. Applications
@@ -137,8 +139,8 @@ of the selected representation.
 
 Licensed under either of:
 
-- MIT license ([`LICENSE-MIT`](LICENSE-MIT) or <https://opensource.org/licenses/MIT>);
-- Apache License, Version 2.0 ([`LICENSE-APACHE`](LICENSE-APACHE) or <https://www.apache.org/licenses/LICENSE-2.0>).
+- MIT license (`LICENSE-MIT` or <https://opensource.org/licenses/MIT>);
+- Apache License, Version 2.0 (`LICENSE-APACHE` or <https://www.apache.org/licenses/LICENSE-2.0>).
 
 Unless you explicitly state otherwise, any contribution intentionally
 submitted for inclusion in this crate by you, as defined in the Apache-2.0
