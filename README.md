@@ -90,11 +90,17 @@ does not pre-scan, chunk, collect, or otherwise inspect the body.
 Locale selection is optional and policy-driven:
 
 ```rust
-use http_content_negotiation::LocalePolicy;
+use http_content_negotiation::{LanguageIdentifier, LocalePolicy, langid_slice};
 
-static SUPPORTED: &[&str] = &["en-US", "nl-NL"];
-let policy = LocalePolicy::new("en-US", SUPPORTED);
+static SUPPORTED: &[LanguageIdentifier] =
+    langid_slice!["en-US", "nl-NL"];
+let policy = LocalePolicy::new(SUPPORTED[0].clone(), SUPPORTED);
 ```
+
+Locale values are [`unic-langid`](https://docs.rs/unic-langid/0.9/unic_langid/struct.LanguageIdentifier.html)
+BCP 47 language identifiers, not unchecked strings. The `Accept-Language`
+parser exposes typed ranges: either a `LanguageIdentifier` or the HTTP `*`
+wildcard, with quality values kept separately.
 
 The selected locale is available as a [`SelectedLocale`](https://docs.rs/http-content-negotiation/latest/http_content_negotiation/struct.SelectedLocale.html)
 request extension and to deferred renderers through [`RenderContext`]. The

@@ -14,8 +14,8 @@ use bytes::Bytes;
 use futures_util::stream;
 use http_body_util::BodyExt;
 use http_content_negotiation::{
-    ContentNegotiationLayer, DeferredResponse, LocalePolicy, Representation, RepresentationId,
-    RepresentationRegistry, RequestMediaTypes, media_type,
+    ContentNegotiationLayer, DeferredResponse, LanguageIdentifier, LocalePolicy, Representation,
+    RepresentationId, RepresentationRegistry, RequestMediaTypes, media_type,
 };
 use tower::ServiceExt;
 
@@ -25,13 +25,15 @@ const JSONL: Representation = Representation::new(
     RepresentationId::new("jsonl"),
     media_type::APPLICATION_NDJSON,
 );
-static SUPPORTED_LOCALES: &[&str] = &["en-US", "nl-NL"];
+static SUPPORTED_LOCALES: &[LanguageIdentifier] = unic_langid::langid_slice!["en-US", "nl-NL"];
 
 #[tokio::test]
 async fn layer_selects_jsonl_locale_and_streams_the_body() {
     let registry = RepresentationRegistry::new(JSON, [JSON, JSONL]);
-    let layer = ContentNegotiationLayer::new(registry)
-        .with_locale_policy(LocalePolicy::new("en-US", SUPPORTED_LOCALES));
+    let layer = ContentNegotiationLayer::new(registry).with_locale_policy(LocalePolicy::new(
+        SUPPORTED_LOCALES[0].clone(),
+        SUPPORTED_LOCALES,
+    ));
     let app = Router::new()
         .route(
             "/",
@@ -41,7 +43,10 @@ async fn layer_selects_jsonl_locale_and_streams_the_body() {
                         context.representation().id(),
                         RepresentationId::new("jsonl")
                     );
-                    assert_eq!(context.locale().expect("locale").as_str(), "nl-NL");
+                    assert_eq!(
+                        context.locale().expect("locale").as_langid(),
+                        &SUPPORTED_LOCALES[1]
+                    );
                     let body = stream::iter([
                         Ok::<Bytes, Infallible>(Bytes::from_static(b"{\"id\":1}\n")),
                         Ok(Bytes::from_static(b"{\"id\":2}\n")),

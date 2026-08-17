@@ -1,6 +1,6 @@
 [package]
 name = "http-content-negotiation"
-version = "0.2.0"
+version = "0.3.0"
 description = "Axum and Tower content and language negotiation for streaming HTTP responses"
 authors = ["DataRoad Inc, Delaware, USA, trading as Legra"]
 edition = "2024"
@@ -29,6 +29,7 @@ axum = "0.8"
 http = "1"
 thiserror = "2"
 tower = "0.5"
+unic-langid = { version = "0.9", features = ["macros"] }
 
 [build-dependencies]
 rhusky = "0.0.6"

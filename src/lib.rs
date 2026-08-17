@@ -17,13 +17,15 @@ mod media;
 pub use crate::accept::{MediaRange, ParsedAccept};
 pub use crate::error::{HeaderField, NegotiationError};
 pub use crate::language::{
-    AcceptLanguage, LocalePolicy, LocaleRange, SelectedLocale, accept_language_from_headers,
+    AcceptLanguage, LanguageRange, LocalePolicy, LocaleRange, SelectedLocale,
+    accept_language_from_headers,
 };
 pub use crate::layer::{ContentNegotiationLayer, DeferredResponse, RenderContext, RenderError};
 pub use crate::media::{
     NegotiatedRepresentation, Representation, RepresentationId, RepresentationRegistry,
     RequestMediaType, RequestMediaTypes,
 };
+pub use unic_langid::{LanguageIdentifier, langid_slice};
 
 /// Common media-type constants for representations frequently used with the
 /// negotiation layer. Applications may register any additional media type.
