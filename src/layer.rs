@@ -69,6 +69,7 @@ impl RenderError {
 }
 
 type Renderer = Box<dyn FnOnce(RenderContext) -> Result<Response<Body>, RenderError> + Send>;
+type ErrorRenderer = Arc<dyn Fn(&NegotiationError) -> Response<Body> + Send + Sync>;
 
 /// A response whose streaming encoder is selected by the global Tower layer.
 ///
@@ -117,7 +118,7 @@ pub struct ContentNegotiationLayer {
     registry: Arc<RepresentationRegistry>,
     locale_policy: Option<LocalePolicy>,
     request_media_types: Option<RequestMediaTypes>,
-    error_renderer: Arc<dyn Fn(&NegotiationError) -> Response<Body> + Send + Sync>,
+    error_renderer: ErrorRenderer,
 }
 
 impl ContentNegotiationLayer {
@@ -178,7 +179,7 @@ pub struct ContentNegotiationService<S> {
     registry: Arc<RepresentationRegistry>,
     locale_policy: Option<LocalePolicy>,
     request_media_types: Option<RequestMediaTypes>,
-    error_renderer: Arc<dyn Fn(&NegotiationError) -> Response<Body> + Send + Sync>,
+    error_renderer: ErrorRenderer,
 }
 
 type BoxFuture<T> = Pin<Box<dyn Future<Output = T> + Send + 'static>>;
