@@ -117,6 +117,7 @@ pub struct ContentNegotiationLayer {
     registry: Arc<RepresentationRegistry>,
     locale_policy: Option<LocalePolicy>,
     request_media_types: Option<RequestMediaTypes>,
+    error_renderer: Arc<dyn Fn(&NegotiationError) -> Response<Body> + Send + Sync>,
 }
 
 impl ContentNegotiationLayer {
@@ -126,7 +127,21 @@ impl ContentNegotiationLayer {
             registry: Arc::new(registry),
             locale_policy: None,
             request_media_types: None,
+            error_renderer: Arc::new(default_error_response),
         }
+    }
+
+    /// Set the response renderer for negotiation failures.
+    ///
+    /// The default renderer is a plain-text response. Applications with a
+    /// structured error contract can replace it without wrapping or reading
+    /// the response body, preserving the layer's streaming boundary.
+    pub fn with_error_renderer<F>(mut self, renderer: F) -> Self
+    where
+        F: Fn(&NegotiationError) -> Response<Body> + Send + Sync + 'static,
+    {
+        self.error_renderer = Arc::new(renderer);
+        self
     }
 
     /// Add `Accept-Language` negotiation.
@@ -151,6 +166,7 @@ impl<S> Layer<S> for ContentNegotiationLayer {
             registry: Arc::clone(&self.registry),
             locale_policy: self.locale_policy.clone(),
             request_media_types: self.request_media_types.clone(),
+            error_renderer: Arc::clone(&self.error_renderer),
         }
     }
 }
@@ -162,6 +178,7 @@ pub struct ContentNegotiationService<S> {
     registry: Arc<RepresentationRegistry>,
     locale_policy: Option<LocalePolicy>,
     request_media_types: Option<RequestMediaTypes>,
+    error_renderer: Arc<dyn Fn(&NegotiationError) -> Response<Body> + Send + Sync>,
 }
 
 type BoxFuture<T> = Pin<Box<dyn Future<Output = T> + Send + 'static>>;
@@ -188,11 +205,12 @@ where
             self.request_media_types.as_ref(),
         );
         let mut inner = self.inner.clone();
+        let error_renderer = Arc::clone(&self.error_renderer);
 
         Box::pin(async move {
             let (representation, request_media_type, locale, locale_enabled) = match negotiation {
                 Ok(result) => result,
-                Err(error) => return Ok(error_response(&error)),
+                Err(error) => return Ok((error_renderer)(&error)),
             };
 
             request.extensions_mut().insert(representation);
@@ -334,7 +352,7 @@ fn header_value(
         .map(Option::flatten)
 }
 
-fn error_response(error: &NegotiationError) -> Response<Body> {
+fn default_error_response(error: &NegotiationError) -> Response<Body> {
     let status = error.status();
     Response::builder()
         .status(status)

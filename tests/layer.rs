@@ -130,6 +130,39 @@ async fn request_content_type_can_be_validated_without_buffering_the_body() {
     assert_eq!(response.status(), StatusCode::UNSUPPORTED_MEDIA_TYPE);
 }
 
+#[tokio::test]
+async fn applications_can_render_negotiation_errors_without_reading_a_body() {
+    let registry = RepresentationRegistry::new(JSON, [JSON]);
+    let app = Router::new()
+        .route("/", get(|| async { "unreachable" }))
+        .layer(
+            ContentNegotiationLayer::new(registry).with_error_renderer(|error| {
+                ResponseBuilder::build(
+                    "application/problem+json",
+                    Body::from(format!("{{\"error\":\"{error}\"}}")),
+                )
+            }),
+        );
+
+    let request = Request::builder()
+        .uri("/")
+        .header(header::ACCEPT, "text/html")
+        .body(Body::empty())
+        .expect("request");
+    let response = app.oneshot(request).await.expect("response");
+    assert_eq!(
+        response.headers()[header::CONTENT_TYPE],
+        "application/problem+json"
+    );
+    let body = response
+        .into_body()
+        .collect()
+        .await
+        .expect("body")
+        .to_bytes();
+    assert!(body.starts_with(br#"{"error":"no acceptable representation"#));
+}
+
 struct ResponseBuilder;
 
 impl ResponseBuilder {
