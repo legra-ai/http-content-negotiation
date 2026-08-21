@@ -5,3 +5,11 @@ refactor = { changelog_title = "Refactoring" }
 docs = { changelog_title = "Documentation" }
 test = { changelog_title = "Tests" }
 chore = { changelog_title = "Maintenance" }
+
+[changelog]
+path = "CHANGELOG.md"
+template = "remote"
+remote = "github.com"
+repository = "http-content-negotiation"
+owner = "legra-ai"
+authors = [{ username = "jgeluk", signature = "Jacobus Geluk" }]
