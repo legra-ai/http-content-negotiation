@@ -156,6 +156,47 @@ impl MediaType {
         Self(value)
     }
 
+    /// Validate and wrap a static media type that may be a wildcard
+    /// range alias (`*/*`, `type/*`).
+    ///
+    /// Negotiation candidate tables may register a range alias to pin
+    /// a wildcard `Accept` range to a specific representation at
+    /// exact-match specificity. A range alias is never a valid
+    /// `Content-Type` stamp — concrete stamps use
+    /// [`MediaType::try_new`] / [`MediaType::from_static`].
+    ///
+    /// # Errors
+    ///
+    /// [`InvalidMediaType`] when the value is empty, longer than 255
+    /// bytes, has no single `/`, or contains a non-token,
+    /// non-wildcard character.
+    pub fn try_new_range(value: &'static str) -> Result<Self, InvalidMediaType> {
+        let invalid = |reason| InvalidMediaType {
+            reason,
+            value: value.to_owned(),
+        };
+        if value.is_empty() {
+            return Err(invalid("must not be empty"));
+        }
+        if value.len() > 255 {
+            return Err(invalid("longer than 255 bytes"));
+        }
+        let Some((main, sub)) = value.split_once('/') else {
+            return Err(invalid("must be type/subtype"));
+        };
+        if main.is_empty() || sub.is_empty() || sub.contains('/') {
+            return Err(invalid("must be exactly two non-empty segments"));
+        }
+        let segment_ok = |segment: &str| segment == "*" || Self::is_token(segment);
+        if !segment_ok(main) || !segment_ok(sub) {
+            return Err(invalid("segments must be HTTP token characters or '*'"));
+        }
+        if main == "*" && sub != "*" {
+            return Err(invalid("'*/subtype' is not a valid media range"));
+        }
+        Ok(Self(value))
+    }
+
     /// The validated media type.
     #[must_use]
     pub const fn as_str(self) -> &'static str {
