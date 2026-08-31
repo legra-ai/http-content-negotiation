@@ -22,22 +22,24 @@ pub use crate::language::{
 };
 pub use crate::layer::{ContentNegotiationLayer, DeferredResponse, RenderContext, RenderError};
 pub use crate::media::{
-    NegotiatedRepresentation, Representation, RepresentationId, RepresentationRegistry,
-    RequestMediaType, RequestMediaTypes,
+    InvalidMediaType, MediaType, NegotiatedRepresentation, Representation, RepresentationId,
+    RepresentationRegistry, RequestMediaType, RequestMediaTypes,
 };
 pub use unic_langid::{LanguageIdentifier, langid_slice};
 
 /// Common media-type constants for representations frequently used with the
 /// negotiation layer. Applications may register any additional media type.
 pub mod media_type {
+    use crate::MediaType;
     /// JSON document representation.
-    pub const APPLICATION_JSON: &str = "application/json";
+    pub const APPLICATION_JSON: MediaType = MediaType::from_static("application/json");
     /// Newline-delimited JSON record-stream representation.
-    pub const APPLICATION_NDJSON: &str = "application/x-ndjson";
+    pub const APPLICATION_NDJSON: MediaType = MediaType::from_static("application/x-ndjson");
     /// YAML document representation.
-    pub const APPLICATION_YAML: &str = "application/yaml";
+    pub const APPLICATION_YAML: MediaType = MediaType::from_static("application/yaml");
     /// Opaque byte-stream representation.
-    pub const APPLICATION_OCTET_STREAM: &str = "application/octet-stream";
+    pub const APPLICATION_OCTET_STREAM: MediaType =
+        MediaType::from_static("application/octet-stream");
     /// UTF-8 plain-text error representation.
     pub const TEXT_PLAIN_UTF8: &str = "text/plain; charset=utf-8";
 }

@@ -297,7 +297,7 @@ fn add_response_headers(
     if response.status().is_success() && !response.headers().contains_key(header::CONTENT_TYPE) {
         response.headers_mut().insert(
             header::CONTENT_TYPE,
-            header::HeaderValue::from_static(representation.media_type()),
+            header::HeaderValue::from_static(representation.media_type().as_str()),
         );
     }
     append_vary(response, "Accept");

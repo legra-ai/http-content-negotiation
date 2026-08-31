@@ -135,6 +135,16 @@ This crate deliberately does not provide:
 Streaming envelope framing and format-specific encoders can be layered on top
 of the selected representation.
 
+## Shared media-type value
+
+`MediaType` is the one validated media-type value for the negotiation
+family: `Representation` declarations and `RequestMediaTypes` here, and
+response tables and `Content-Type` stamps in boundary crates such as
+`axum-serde-boundary`. `MediaType::from_static` validates `const`
+declarations at compile time; `MediaType::try_new` is the fallible
+runtime constructor. The `media_type` module ships common constants as
+`MediaType` values.
+
 ## License
 
 Licensed under either of:

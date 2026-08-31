@@ -104,7 +104,7 @@ impl ParsedAccept {
         for (candidate_index, candidate) in candidates.iter().enumerate() {
             let mut candidate_best: Option<(u16, u8)> = None;
             for range in &self.ranges {
-                if let Some(specificity) = range.specificity_for(candidate.media_type())
+                if let Some(specificity) = range.specificity_for(candidate.media_type().as_str())
                     && candidate_best
                         .is_none_or(|(_, current_specificity)| specificity > current_specificity)
                 {

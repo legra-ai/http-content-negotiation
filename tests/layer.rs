@@ -52,7 +52,7 @@ async fn layer_selects_jsonl_locale_and_streams_the_body() {
                         Ok(Bytes::from_static(b"{\"id\":2}\n")),
                     ]);
                     Ok(ResponseBuilder::build(
-                        context.representation().media_type(),
+                        context.representation().media_type().as_str(),
                         Body::from_stream(body),
                     ))
                 })
@@ -62,7 +62,7 @@ async fn layer_selects_jsonl_locale_and_streams_the_body() {
 
     let request = Request::builder()
         .uri("/")
-        .header(header::ACCEPT, media_type::APPLICATION_NDJSON)
+        .header(header::ACCEPT, media_type::APPLICATION_NDJSON.as_str())
         .header(header::ACCEPT_LANGUAGE, "nl-NL")
         .body(Body::empty())
         .expect("request");
@@ -71,7 +71,7 @@ async fn layer_selects_jsonl_locale_and_streams_the_body() {
     assert_eq!(response.status(), StatusCode::OK);
     assert_eq!(
         headers[header::CONTENT_TYPE],
-        media_type::APPLICATION_NDJSON
+        media_type::APPLICATION_NDJSON.as_str()
     );
     assert_eq!(headers[header::VARY], "Accept, Accept-Language");
     let body = response
@@ -122,7 +122,7 @@ async fn request_content_type_can_be_validated_without_buffering_the_body() {
 
     let request = Request::builder()
         .uri("/")
-        .header(header::CONTENT_TYPE, media_type::APPLICATION_YAML)
+        .header(header::CONTENT_TYPE, media_type::APPLICATION_YAML.as_str())
         .body(Body::empty())
         .expect("request");
     let response = app.oneshot(request).await.expect("response");
