@@ -1,7 +1,12 @@
 #![allow(missing_docs)]
 
 use http_content_negotiation::{
-    HeaderField, NegotiationError, ParsedAccept, Representation, RepresentationId, media_type,
+    HeaderField,
+    NegotiationError,
+    ParsedAccept,
+    Representation,
+    RepresentationId,
+    media_type,
 };
 
 const JSON: Representation =

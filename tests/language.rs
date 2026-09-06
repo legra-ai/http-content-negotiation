@@ -1,7 +1,11 @@
 #![allow(missing_docs)]
 
 use http_content_negotiation::{
-    AcceptLanguage, LanguageIdentifier, LanguageRange, LocalePolicy, SelectedLocale,
+    AcceptLanguage,
+    LanguageIdentifier,
+    LanguageRange,
+    LocalePolicy,
+    SelectedLocale,
 };
 
 static SUPPORTED: &[LanguageIdentifier] = unic_langid::langid_slice!["en-US", "nl-NL"];

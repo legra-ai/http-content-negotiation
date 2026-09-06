@@ -14,18 +14,43 @@ mod language;
 mod layer;
 mod media;
 
-pub use crate::accept::{MediaRange, ParsedAccept};
-pub use crate::error::{HeaderField, NegotiationError};
+pub use unic_langid::{
+    LanguageIdentifier,
+    langid_slice,
+};
+
+pub use crate::accept::{
+    MediaRange,
+    ParsedAccept,
+};
+pub use crate::error::{
+    HeaderField,
+    NegotiationError,
+};
 pub use crate::language::{
-    AcceptLanguage, LanguageRange, LocalePolicy, LocaleRange, SelectedLocale,
+    AcceptLanguage,
+    LanguageRange,
+    LocalePolicy,
+    LocaleRange,
+    SelectedLocale,
     accept_language_from_headers,
 };
-pub use crate::layer::{ContentNegotiationLayer, DeferredResponse, RenderContext, RenderError};
-pub use crate::media::{
-    InvalidMediaType, MediaType, NegotiatedRepresentation, Representation, RepresentationId,
-    RepresentationRegistry, RequestMediaType, RequestMediaTypes,
+pub use crate::layer::{
+    ContentNegotiationLayer,
+    DeferredResponse,
+    RenderContext,
+    RenderError,
 };
-pub use unic_langid::{LanguageIdentifier, langid_slice};
+pub use crate::media::{
+    InvalidMediaType,
+    MediaType,
+    NegotiatedRepresentation,
+    Representation,
+    RepresentationId,
+    RepresentationRegistry,
+    RequestMediaType,
+    RequestMediaTypes,
+};
 
 /// Common media-type constants for representations frequently used with the
 /// negotiation layer. Applications may register any additional media type.
