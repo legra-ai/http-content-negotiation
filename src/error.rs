@@ -1,5 +1,9 @@
+use std::fmt::{
+    Display,
+    Formatter,
+};
+
 use axum::http::StatusCode;
-use std::fmt::{Display, Formatter};
 use thiserror::Error;
 
 /// An HTTP request header used by the negotiation layer.

@@ -1,7 +1,13 @@
-use axum::http::{HeaderMap, header};
+use axum::http::{
+    HeaderMap,
+    header,
+};
 use unic_langid::LanguageIdentifier;
 
-use crate::error::{HeaderField, NegotiationError};
+use crate::error::{
+    HeaderField,
+    NegotiationError,
+};
 
 /// One language range from an `Accept-Language` header.
 #[derive(Debug, Clone, PartialEq, Eq)]

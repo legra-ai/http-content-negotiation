@@ -1,17 +1,41 @@
 use std::future::Future;
 use std::pin::Pin;
-use std::sync::{Arc, Mutex};
-use std::task::{Context, Poll};
+use std::sync::{
+    Arc,
+    Mutex,
+};
+use std::task::{
+    Context,
+    Poll,
+};
 
 use axum::body::Body;
-use axum::http::{Request, Response, StatusCode, header};
+use axum::http::{
+    Request,
+    Response,
+    StatusCode,
+    header,
+};
 use axum::response::IntoResponse;
-use tower::{Layer, Service};
+use tower::{
+    Layer,
+    Service,
+};
 
-use crate::error::{HeaderField, NegotiationError};
-use crate::language::{LocalePolicy, SelectedLocale, accept_language_from_headers};
+use crate::error::{
+    HeaderField,
+    NegotiationError,
+};
+use crate::language::{
+    LocalePolicy,
+    SelectedLocale,
+    accept_language_from_headers,
+};
 use crate::media::{
-    NegotiatedRepresentation, RepresentationRegistry, RequestMediaType, RequestMediaTypes,
+    NegotiatedRepresentation,
+    RepresentationRegistry,
+    RequestMediaType,
+    RequestMediaTypes,
 };
 use crate::media_type::TEXT_PLAIN_UTF8;
 

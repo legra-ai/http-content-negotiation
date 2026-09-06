@@ -1,4 +1,7 @@
-use crate::error::{HeaderField, NegotiationError};
+use crate::error::{
+    HeaderField,
+    NegotiationError,
+};
 use crate::media::Representation;
 
 /// One media range from an `Accept` header.

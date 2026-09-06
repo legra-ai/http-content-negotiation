@@ -6,6 +6,7 @@ authors = ["DataRoad Inc, Delaware, USA, trading as Legra"]
 edition = "2024"
 rust-version = "1.97.1"
 license = "MIT OR Apache-2.0"
+documentation = "https://docs.rs/http-content-negotiation"
 readme = "README.md"
 repository = "https://github.com/legra-ai/http-content-negotiation"
 keywords = ["axum", "tower", "http", "content-negotiation", "streaming"]

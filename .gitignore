@@ -1,4 +1,4 @@
 /target/
-Cargo.lock
 CHANGELOG.md
 .DS_Store
+rustc-ice-*.txt

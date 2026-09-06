@@ -1,10 +1,16 @@
 use std::fmt;
 use std::sync::Arc;
 
-use axum::http::{HeaderMap, header};
+use axum::http::{
+    HeaderMap,
+    header,
+};
 
 use crate::accept::ParsedAccept;
-use crate::error::{HeaderField, NegotiationError};
+use crate::error::{
+    HeaderField,
+    NegotiationError,
+};
 
 /// Why a media type was rejected.
 #[derive(Debug, Clone, PartialEq, Eq)]
