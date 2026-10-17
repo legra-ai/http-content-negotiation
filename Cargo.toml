@@ -17,9 +17,11 @@ include = [
     "src/**",
     "Cargo.toml",
     "README.md",
-    "LICENSE-*",
     "build.rs",
     "tests/**",
+    "Cargo.lock",
+    "LICENSE-MIT",
+    "LICENSE-APACHE",
 ]
 
 [lib]
@@ -33,7 +35,7 @@ tower = "0.5"
 unic-langid = { version = "0.9", features = ["macros"] }
 
 [build-dependencies]
-rhusky = "0.0.6"
+rhusky = "2.0.1"
 
 [dev-dependencies]
 bytes = "1"

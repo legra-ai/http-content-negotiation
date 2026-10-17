@@ -2,3 +2,6 @@
 CHANGELOG.md
 .DS_Store
 rustc-ice-*.txt
+
+__pycache__/
+*.pyc
