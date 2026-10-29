@@ -16,7 +16,7 @@ jobs:
       - run: python3 -m unittest discover -s scripts -p 'test_*.py'
   ci:
     needs: prepare
-    uses: legra-ai/github-actions/.github/workflows/cargo-maintenance.yml@cf631c4de1faa1b0635d6dae2211c952d736e3c7
+    uses: legra-ai/github-actions/.github/workflows/cargo-maintenance.yml@fa33151dee2d92ee71027596452668491871f3c3
     with:
       crate-name: http-content-negotiation
       kind: library
