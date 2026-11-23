@@ -202,7 +202,7 @@ dependencies = [
 
 [[package]]
 name = "http-content-negotiation"
-version = "0.4.12"
+version = "0.4.13"
 dependencies = [
  "axum",
  "bytes",
